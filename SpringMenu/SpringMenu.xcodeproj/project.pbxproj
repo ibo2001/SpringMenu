@@ -22,6 +22,13 @@
 		1038B43C1819B25A006303A0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1038B41B1819B25A006303A0 /* UIKit.framework */; };
 		1038B4441819B25A006303A0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1038B4421819B25A006303A0 /* InfoPlist.strings */; };
 		1038B4461819B25A006303A0 /* SpringMenuTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1038B4451819B25A006303A0 /* SpringMenuTests.m */; };
+		1038B4511819B399006303A0 /* IBSrpingMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 1038B4501819B399006303A0 /* IBSrpingMenu.m */; };
+		1038B4651819C0BD006303A0 /* face-frown.png in Resources */ = {isa = PBXBuildFile; fileRef = 1038B45F1819C0BD006303A0 /* face-frown.png */; };
+		1038B4661819C0BD006303A0 /* ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = 1038B4601819C0BD006303A0 /* ghost.png */; };
+		1038B4671819C0BD006303A0 /* mail-send.png in Resources */ = {isa = PBXBuildFile; fileRef = 1038B4611819C0BD006303A0 /* mail-send.png */; };
+		1038B4681819C0BD006303A0 /* search.png in Resources */ = {isa = PBXBuildFile; fileRef = 1038B4621819C0BD006303A0 /* search.png */; };
+		1038B4691819C0BD006303A0 /* volume-high.png in Resources */ = {isa = PBXBuildFile; fileRef = 1038B4631819C0BD006303A0 /* volume-high.png */; };
+		1038B46A1819C0BD006303A0 /* zoom-out.png in Resources */ = {isa = PBXBuildFile; fileRef = 1038B4641819C0BD006303A0 /* zoom-out.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +62,14 @@
 		1038B4411819B25A006303A0 /* SpringMenuTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SpringMenuTests-Info.plist"; sourceTree = "<group>"; };
 		1038B4431819B25A006303A0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1038B4451819B25A006303A0 /* SpringMenuTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpringMenuTests.m; sourceTree = "<group>"; };
+		1038B44F1819B399006303A0 /* IBSrpingMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IBSrpingMenu.h; path = IBSrpingMenu/IBSrpingMenu.h; sourceTree = "<group>"; };
+		1038B4501819B399006303A0 /* IBSrpingMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IBSrpingMenu.m; path = IBSrpingMenu/IBSrpingMenu.m; sourceTree = "<group>"; };
+		1038B45F1819C0BD006303A0 /* face-frown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-frown.png"; sourceTree = "<group>"; };
+		1038B4601819C0BD006303A0 /* ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ghost.png; sourceTree = "<group>"; };
+		1038B4611819C0BD006303A0 /* mail-send.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mail-send.png"; sourceTree = "<group>"; };
+		1038B4621819C0BD006303A0 /* search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = search.png; sourceTree = "<group>"; };
+		1038B4631819C0BD006303A0 /* volume-high.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-high.png"; sourceTree = "<group>"; };
+		1038B4641819C0BD006303A0 /* zoom-out.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zoom-out.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +99,9 @@
 		1038B40B1819B25A006303A0 = {
 			isa = PBXGroup;
 			children = (
+				1038B45E1819C0BD006303A0 /* graphics */,
+				1038B44F1819B399006303A0 /* IBSrpingMenu.h */,
+				1038B4501819B399006303A0 /* IBSrpingMenu.m */,
 				1038B41D1819B25A006303A0 /* SpringMenu */,
 				1038B43F1819B25A006303A0 /* SpringMenuTests */,
 				1038B4161819B25A006303A0 /* Frameworks */,
@@ -153,6 +171,20 @@
 				1038B4421819B25A006303A0 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1038B45E1819C0BD006303A0 /* graphics */ = {
+			isa = PBXGroup;
+			children = (
+				1038B45F1819C0BD006303A0 /* face-frown.png */,
+				1038B4601819C0BD006303A0 /* ghost.png */,
+				1038B4611819C0BD006303A0 /* mail-send.png */,
+				1038B4621819C0BD006303A0 /* search.png */,
+				1038B4631819C0BD006303A0 /* volume-high.png */,
+				1038B4641819C0BD006303A0 /* zoom-out.png */,
+			);
+			name = graphics;
+			path = SpringMenu/graphics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,7 +264,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				1038B42E1819B25A006303A0 /* Main_iPad.storyboard in Resources */,
+				1038B4661819C0BD006303A0 /* ghost.png in Resources */,
 				1038B4331819B25A006303A0 /* Images.xcassets in Resources */,
+				1038B46A1819C0BD006303A0 /* zoom-out.png in Resources */,
+				1038B4681819C0BD006303A0 /* search.png in Resources */,
+				1038B4691819C0BD006303A0 /* volume-high.png in Resources */,
+				1038B4651819C0BD006303A0 /* face-frown.png in Resources */,
+				1038B4671819C0BD006303A0 /* mail-send.png in Resources */,
 				1038B42B1819B25A006303A0 /* Main_iPhone.storyboard in Resources */,
 				1038B4221819B25A006303A0 /* InfoPlist.strings in Resources */,
 			);
@@ -253,6 +291,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1038B4511819B399006303A0 /* IBSrpingMenu.m in Sources */,
 				1038B4311819B25A006303A0 /* ViewController.m in Sources */,
 				1038B4281819B25A006303A0 /* AppDelegate.m in Sources */,
 				1038B4241819B25A006303A0 /* main.m in Sources */,
