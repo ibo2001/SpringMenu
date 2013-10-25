@@ -14,7 +14,8 @@
     NSArray *btns;
 }
 
-@property (weak, nonatomic) IBOutlet IBSrpingMenu *menu;
+@property (weak, nonatomic) IBOutlet UIButton *menuBtn;
+@property (retain, nonatomic) IBOutlet IBSrpingMenu *menu;
 - (IBAction)showMenu:(id)sender;
 @end
 
@@ -25,13 +26,12 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     btns = @[@"face-frown",@"ghost",@"mail-send",@"search",@"volume-high",@"zoom-out"];
-
+    self.menu = [[IBSrpingMenu alloc]initSpringMenuForBtn:self.menuBtn];
+    self.menu.dataSource = self;
+    self.menu.itemSelectedDelegate = self;
+    [self.menu layOutTheBtns];
 }
 
--(void)viewDidAppear:(BOOL)animated{
-    [self.menu reloadData];
-
-}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -39,6 +39,10 @@
 }
 
 - (IBAction)showMenu:(id)sender {
+    if (self.menu.alpha <=0.0f)
+        [self.menu showSpringMenu];
+    else
+        [self.menu hideSpringMenu];
 }
 
 #pragma mark-
@@ -47,7 +51,7 @@
     return btns.count;
 }
 - (int)numberOfItemsInRow:(IBSrpingMenu*) itmsInRow{
-    return 1;
+    return 3;
 }
 
 - (NSString *) ibSrpingMenu:(IBSrpingMenu*)springMenu imageNameForItemAtIndex:(NSUInteger) index{

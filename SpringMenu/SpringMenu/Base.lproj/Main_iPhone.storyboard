@@ -26,21 +26,11 @@
                                     <action selector="showMenu:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="CLN-M1-Sso"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iwj-7L-m3l" customClass="IBSrpingMenu">
-                                <rect key="frame" x="80" y="58" width="160" height="284"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="1" green="0.4229227981" blue="0.096604081780000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <connections>
-                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="ejq-rj-K1C"/>
-                                    <outlet property="itemSelectedDelegate" destination="vXZ-lx-hvc" id="fu1-nU-fks"/>
-                                    <outlet property="menuBtn" destination="jxA-r8-egq" id="zyj-RW-YMn"/>
-                                </connections>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="menu" destination="iwj-7L-m3l" id="mgp-e2-Wuu"/>
+                        <outlet property="menuBtn" destination="jxA-r8-egq" id="3oJ-HB-CyK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

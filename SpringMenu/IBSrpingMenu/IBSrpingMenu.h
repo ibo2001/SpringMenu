@@ -31,20 +31,26 @@
     
     NSMutableArray *_icons;
 
+    int animTag;
 }
 
 
 
 @property (nonatomic, retain) NSMutableArray *icons;
-@property (nonatomic, weak) IBOutlet id <IBSrpingMenuDelegate> itemSelectedDelegate;
-@property (nonatomic, weak) IBOutlet id <IBSrpingMenuDataSource> dataSource;
-@property (nonatomic, weak) IBOutlet UIButton *menuBtn;
+@property (nonatomic, assign) id <IBSrpingMenuDelegate> itemSelectedDelegate;
+@property (nonatomic, assign) id <IBSrpingMenuDataSource> dataSource;
+@property (nonatomic, weak) UIButton *menuBtn;
 
 @property (nonatomic, retain) UIImage *selectedImage;
 @property (nonatomic, retain) UIImage *normalImage;
 @property (nonatomic, assign) int itemCount;
 
--(void) reloadData;
++(id)initSpringMenuForBtn:(UIButton *)btn;
+-(id)initSpringMenuForBtn:(UIButton *)btn;
+
+-(void) layOutTheBtns;
 -(void) setSelectedIndex:(int) index animated:(BOOL) animated;
 
+-(void)showSpringMenu;
+-(void)hideSpringMenu;
 @end

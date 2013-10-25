@@ -21,9 +21,20 @@
 @synthesize itemCount = _itemCount;
 
 
--(void) reloadData
-{
++(id)initSpringMenuForBtn:(UIButton *)btn{
+    return [[self alloc]init];
+}
+-(id)initSpringMenuForBtn:(UIButton *)btn{
+    self = [super init];
+    if (self) {
+        self.menuBtn = btn;
+        [btn.superview insertSubview:self belowSubview:btn];
+    }
+    
+    return self;
+}
 
+-(void) layOutTheBtns{
     self.itemCount = [dataSource numberOfItemsForMenu:self];
     
     
@@ -34,16 +45,16 @@
     float finalWidht = 0.0f;
     float finalHeight = 0.0f;
     
-    int finalTotalOfRows = 0;
 
     for(int i = 0 ; i < self.itemCount; i ++){
         int theRow = i / rowTotal;
         int column = i % rowTotal;
-
         UIImage *icon = [UIImage imageNamed:[dataSource ibSrpingMenu:self imageNameForItemAtIndex:i]];
         CGSize size = icon.size;
 
         UIButton *customButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        customButton.alpha = 0.0f;
+        
         [customButton setImage:icon forState:UIControlStateNormal];
         
         customButton.tag = tag++;
@@ -64,9 +75,10 @@
 
     
     [self setFrame:CGRectMake(CGRectGetMinX(self.menuBtn.frame),
-                               CGRectGetMaxY(self.menuBtn.frame),
+                               self.menuBtn.frame.origin.y-finalHeight,
                                finalWidht,
                                finalHeight)];
+    self.alpha = 0.0f;
     self.center = CGPointMake(self.menuBtn.center.x, self.center.y);
 
 }
@@ -84,8 +96,7 @@
 {
     UIButton *button = (UIButton*) sender;
     
-    for(int i = 0; i < self.itemCount; i++)
-    {
+    for(int i = 0; i < self.itemCount; i++){
         UIButton *thisButton = (UIButton*) [self viewWithTag:i + kButtonBaseTag];
         if(i + kButtonBaseTag == button.tag)
             thisButton.selected = YES;
@@ -97,5 +108,54 @@
 }
 
 
+#pragma mark-
+#pragma mark animation
+
+-(void)doShowingTheBtnsAnimation{
+    if (animTag < self.itemCount) {
+        UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [UIView animateWithDuration: 0.2 delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+                button.alpha = 1.0f;
+            }completion:NULL];
+            animTag++;
+            [self performSelector:@selector(doShowingTheBtnsAnimation) withObject:nil afterDelay:.02];
+        });
+    }
+}
+
+-(void)doHidingTheBtnsAnimation{
+    if (animTag >=0) {
+        UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [UIView animateWithDuration: 0.2 delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+                button.alpha = 0.0f;
+            }completion:NULL];
+            animTag--;
+            [self performSelector:@selector(doHidingTheBtnsAnimation) withObject:nil afterDelay:.02];
+        });
+    }else{
+        CGRect r = self.frame;
+        r.origin.y = self.menuBtn.frame.origin.y-self.frame.size.height,
+        self.frame = r;
+        self.alpha = 0.0f;
+    }
+}
+
+-(void)showSpringMenu{
+    animTag = 0;
+    
+    CGRect r = self.frame;
+    r.origin.y = CGRectGetMaxY(self.menuBtn.frame);
+    self.alpha = 1.0f;
+    self.frame = r;
+    [self doShowingTheBtnsAnimation];
+
+}
+
+-(void)hideSpringMenu{
+    animTag = self.itemCount;
+    [self doHidingTheBtnsAnimation];
+}
 
 @end
