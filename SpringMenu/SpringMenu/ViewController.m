@@ -14,8 +14,9 @@
     NSArray *btns;
 }
 
+@property (weak, nonatomic) IBOutlet UILabel *label;
 @property (weak, nonatomic) IBOutlet UIButton *menuBtn;
-@property (retain, nonatomic) IBOutlet IBSrpingMenu *menu;
+@property (retain, nonatomic) IBSrpingMenu *menu;
 - (IBAction)showMenu:(id)sender;
 @end
 
@@ -25,6 +26,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    [self.label setText:@""];
+
     btns = @[@"face-frown",@"ghost",@"mail-send",@"search",@"volume-high",@"zoom-out"];
     self.menu = [[IBSrpingMenu alloc]initSpringMenuForBtn:self.menuBtn];
     self.menu.dataSource = self;
@@ -39,19 +42,28 @@
 }
 
 - (IBAction)showMenu:(id)sender {
-    if (self.menu.alpha <=0.0f)
-        [self.menu showSpringMenu];
-    else
+    self.menu.showingDuration = .01;
+    self.menu.hidingDuration = .01;
+    
+    if ([self.menuBtn.titleLabel.text isEqualToString:@"Show menu"]){
+        [self.menu showSpringMenu:kSpring];
+        [self.menuBtn setTitle:@"Hide menu" forState:UIControlStateNormal];
+    }else{
         [self.menu hideSpringMenu];
+        [self.menuBtn setTitle:@"Show menu" forState:UIControlStateNormal];
+    }
 }
 
 #pragma mark-
 #pragma mark IBSrpingDelegate and datasource
+-(UIColor *)menuBackgroundColor:(IBSrpingMenu *)menu{
+    return [UIColor redColor];
+}
 - (int)numberOfItemsForMenu:(IBSrpingMenu*) btnView{
     return btns.count;
 }
 - (int)numberOfItemsInRow:(IBSrpingMenu*) itmsInRow{
-    return 3;
+    return 1;
 }
 
 - (NSString *) ibSrpingMenu:(IBSrpingMenu*)springMenu imageNameForItemAtIndex:(NSUInteger) index{
@@ -59,7 +71,10 @@
 }
 
 - (void)ibSpringMenu:(IBSrpingMenu*)springMenu itemSelectedAtIndex:(NSUInteger) index{
-    NSLog(@"%s",__FUNCTION__);
+
+    [self.label setText:[NSString stringWithFormat:@"You have selected %@",[btns objectAtIndex:index]]];
+    [self.menu hideSpringMenu];
+    [self.menuBtn setTitle:@"Show menu" forState:UIControlStateNormal];
 
 }
 @end

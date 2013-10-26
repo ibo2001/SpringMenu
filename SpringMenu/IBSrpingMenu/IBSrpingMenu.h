@@ -14,6 +14,7 @@
 @required
 - (int)numberOfItemsForMenu:(IBSrpingMenu*) btnView;
 - (int)numberOfItemsInRow:(IBSrpingMenu*) itmsInRow;
+- (UIColor *)menuBackgroundColor:(IBSrpingMenu*) menu;
 
 - (NSString *) ibSrpingMenu:(IBSrpingMenu*)springMenu imageNameForItemAtIndex:(NSUInteger) index;
 @end
@@ -23,6 +24,11 @@
 - (void)ibSpringMenu:(IBSrpingMenu*)springMenu itemSelectedAtIndex:(NSUInteger) index;
 @end
 
+typedef enum {
+    kFade,
+    kSpring,
+    kShake
+} AnimationType;
 
 @interface IBSrpingMenu : UIView{
     int _itemCount;
@@ -34,7 +40,7 @@
     int animTag;
 }
 
-
+@property (nonatomic, assign) AnimationType animationType;
 
 @property (nonatomic, retain) NSMutableArray *icons;
 @property (nonatomic, assign) id <IBSrpingMenuDelegate> itemSelectedDelegate;
@@ -45,12 +51,16 @@
 @property (nonatomic, retain) UIImage *normalImage;
 @property (nonatomic, assign) int itemCount;
 
+@property (nonatomic) float showingDuration;
+@property (nonatomic) float hidingDuration;
+
+
 +(id)initSpringMenuForBtn:(UIButton *)btn;
 -(id)initSpringMenuForBtn:(UIButton *)btn;
 
 -(void) layOutTheBtns;
 -(void) setSelectedIndex:(int) index animated:(BOOL) animated;
 
--(void)showSpringMenu;
+-(void)showSpringMenu:(AnimationType)animationType;
 -(void)hideSpringMenu;
 @end

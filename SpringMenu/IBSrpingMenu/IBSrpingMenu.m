@@ -9,6 +9,8 @@
 #import "IBSrpingMenu.h"
 #define kButtonBaseTag 10000
 #define kLeftOffset 2
+#define kDelayAnimation 0.05
+#define kIncreaseDurationBy 10
 
 @implementation IBSrpingMenu
 
@@ -27,6 +29,14 @@
 -(id)initSpringMenuForBtn:(UIButton *)btn{
     self = [super init];
     if (self) {
+        [self.layer setAnchorPoint:CGPointMake(0.5, 0.0)];
+        
+        self.hidingDuration = .1;
+        self.showingDuration = .1;
+        self.layer.cornerRadius = 5.0f;
+        self.layer.masksToBounds = YES;
+        
+        self.backgroundColor = [UIColor clearColor];
         self.menuBtn = btn;
         [btn.superview insertSubview:self belowSubview:btn];
     }
@@ -36,7 +46,7 @@
 
 -(void) layOutTheBtns{
     self.itemCount = [dataSource numberOfItemsForMenu:self];
-    
+    self.backgroundColor = [dataSource menuBackgroundColor:self];
     
     int tag = kButtonBaseTag;
     float padding = 5.0f;
@@ -60,26 +70,26 @@
         customButton.tag = tag++;
         [customButton addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
         
-        customButton.frame = CGRectMake((size.width*column)+(padding*column),
-                                        (size.height*theRow)+(padding*theRow),
+        customButton.frame = CGRectMake(padding+ ((size.width*column)+(padding*column)),
+                                        padding+ ((size.height*theRow)+(padding*theRow)),
                                         icon.size.width, icon.size.height);
         
 
         [self addSubview:customButton];
-        finalHeight = ((theRow+1)*size.height)+(padding*theRow);
-        finalWidht = (rowTotal *size.width)+(padding*rowTotal);
+        finalHeight = (((theRow+1)*size.height)+(padding*theRow)) + padding;
+        finalWidht = ((rowTotal *size.width)+(padding*rowTotal)) + padding;
 
     }
     
 
 
-    
     [self setFrame:CGRectMake(CGRectGetMinX(self.menuBtn.frame),
-                               self.menuBtn.frame.origin.y-finalHeight,
+                               CGRectGetMaxY(self.menuBtn.frame),
                                finalWidht,
                                finalHeight)];
-    self.alpha = 0.0f;
+//    self.alpha = 0.0f;
     self.center = CGPointMake(self.menuBtn.center.x, self.center.y);
+    [self setTransform:CGAffineTransformMakeScale(1.0, 0.0)];
 
 }
 
@@ -107,55 +117,192 @@
     [self.itemSelectedDelegate ibSpringMenu:self itemSelectedAtIndex:button.tag - kButtonBaseTag];
 }
 
+-(void)resetSelfFrame{
+//    CGRect r = self.frame;
+//    r.origin.y = self.menuBtn.frame.origin.y-self.frame.size.height,
+
+    [UIView animateWithDuration: self.showingDuration*kIncreaseDurationBy delay:kDelayAnimation options:UIViewAnimationOptionCurveEaseOut animations:^{
+//        self.frame = r;
+//        self.alpha = 0.0f;
+        [self setTransform:CGAffineTransformMakeScale(1.0, 0.0)];
+    }completion:^(BOOL finished) {
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+    }];
+}
 
 #pragma mark-
-#pragma mark animation
+#pragma mark shake animation
 
--(void)doShowingTheBtnsAnimation{
+-(void)doHidingTheBtnsAnimation_kShake{
+    if (animTag >=0) {
+        UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
+        CGAffineTransform leftShake = CGAffineTransformMakeTranslation(-5, 0);
+
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [UIView animateWithDuration: self.hidingDuration delay:kDelayAnimation options:UIViewAnimationOptionCurveEaseOut animations:^{
+                [UIView setAnimationRepeatCount:5];
+                button.imageView.transform = leftShake;
+            }completion:^(BOOL finished) {
+                button.alpha = 0.0f;
+                animTag--;
+                [self performSelector:@selector(doHidingTheBtnsAnimation_kShake) withObject:nil afterDelay:self.hidingDuration];
+            }];
+        });
+    }else{
+        [self performSelector:@selector(resetSelfFrame) withObject:nil afterDelay:self.hidingDuration];
+    }
+}
+
+-(void)doShowingTheBtnsAnimation_kShake{
+    if (animTag < self.itemCount) {
+        UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
+        CGAffineTransform rightShake = CGAffineTransformMakeTranslation(5, 0);
+
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [UIView animateWithDuration: self.showingDuration delay:kDelayAnimation options:UIViewAnimationOptionCurveEaseIn animations:^{
+                button.alpha = 1.0f;
+                [UIView setAnimationRepeatCount:5];
+                button.imageView.transform = rightShake;
+            }completion:^(BOOL finished) {
+                animTag++;
+                [self performSelector:@selector(doShowingTheBtnsAnimation_kShake) withObject:nil afterDelay:self.showingDuration];
+            }];
+        });
+    }else{
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+    }
+}
+
+#pragma mark-
+#pragma mark Alpha animation
+
+-(void)doShowingTheBtnsAnimation_kFade{
     if (animTag < self.itemCount) {
         UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            [UIView animateWithDuration: 0.2 delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+            [UIView animateWithDuration: self.showingDuration delay:kDelayAnimation options:UIViewAnimationOptionCurveEaseOut animations:^{
                 button.alpha = 1.0f;
-            }completion:NULL];
+            }completion:^(BOOL finished) {
             animTag++;
-            [self performSelector:@selector(doShowingTheBtnsAnimation) withObject:nil afterDelay:.02];
+            [self performSelector:@selector(doShowingTheBtnsAnimation_kFade) withObject:nil afterDelay:self.showingDuration];
+            }];
         });
+    }else{
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
     }
 }
 
--(void)doHidingTheBtnsAnimation{
+
+-(void)doHidingTheBtnsAnimation_kFade{
     if (animTag >=0) {
         UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            [UIView animateWithDuration: 0.2 delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+            [UIView animateWithDuration: self.hidingDuration delay:kDelayAnimation options:UIViewAnimationOptionCurveEaseOut animations:^{
                 button.alpha = 0.0f;
-            }completion:NULL];
-            animTag--;
-            [self performSelector:@selector(doHidingTheBtnsAnimation) withObject:nil afterDelay:.02];
+            }completion:^(BOOL finished){
+                animTag--;
+                [self performSelector:@selector(doHidingTheBtnsAnimation_kFade) withObject:nil afterDelay:self.hidingDuration];
+            }];
         });
     }else{
-        CGRect r = self.frame;
-        r.origin.y = self.menuBtn.frame.origin.y-self.frame.size.height,
-        self.frame = r;
-        self.alpha = 0.0f;
+        [self performSelector:@selector(resetSelfFrame) withObject:nil afterDelay:self.hidingDuration];
     }
 }
 
--(void)showSpringMenu{
-    animTag = 0;
-    
-    CGRect r = self.frame;
-    r.origin.y = CGRectGetMaxY(self.menuBtn.frame);
-    self.alpha = 1.0f;
-    self.frame = r;
-    [self doShowingTheBtnsAnimation];
+#pragma mark-
+#pragma mark shake animation
 
+-(void)doHidingTheBtnsAnimation_kSpring{
+    if (animTag >=0) {
+        UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
+        CGAffineTransform upShake = CGAffineTransformMakeTranslation(0, -5);
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [UIView animateWithDuration: self.hidingDuration delay:kDelayAnimation options:UIViewAnimationOptionCurveEaseOut animations:^{
+                [UIView setAnimationRepeatCount:2];
+                button.imageView.transform = upShake;
+            }completion:^(BOOL finished) {
+                button.alpha = 0.0f;
+                animTag--;
+                [self performSelector:@selector(doHidingTheBtnsAnimation_kSpring) withObject:nil afterDelay:self.hidingDuration];
+            }];
+        });
+    }else{
+        [self performSelector:@selector(resetSelfFrame) withObject:nil afterDelay:self.hidingDuration];
+    }
+}
+
+-(void)doShowingTheBtnsAnimation_kSpring{
+    if (animTag < self.itemCount) {
+        UIButton *button = (UIButton *)[self viewWithTag:animTag+kButtonBaseTag];
+        CGAffineTransform downShake = CGAffineTransformMakeTranslation(0, 5);
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [UIView animateWithDuration: self.showingDuration delay:kDelayAnimation options:UIViewAnimationOptionCurveEaseIn animations:^{
+                button.alpha = 1.0f;
+                [UIView setAnimationRepeatCount:2];
+                button.imageView.transform = downShake;
+            }completion:^(BOOL finished) {
+                animTag++;
+                [self performSelector:@selector(doShowingTheBtnsAnimation_kSpring) withObject:nil afterDelay:self.showingDuration];
+            }];
+        });
+    }else{
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+    }
+}
+
+#pragma mark-
+#pragma mark animation call
+
+-(void)showSpringMenu:(AnimationType)animationType{
+    animTag = 0;
+    self.animationType = animationType;
+    [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
+
+//    CGRect r = self.frame;
+//    r.origin.y = CGRectGetMaxY(self.menuBtn.frame);
+    
+    [UIView animateWithDuration: self.showingDuration*kIncreaseDurationBy delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+//        self.alpha = 1.0f;
+//        self.frame = r;
+        [self setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
+    }completion:^(BOOL finished) {
+        switch (self.animationType) {
+            case kSpring:
+                [self doShowingTheBtnsAnimation_kSpring];
+                break;
+            case kFade:
+                [self doShowingTheBtnsAnimation_kFade];
+                break;
+            case kShake:
+                [self doShowingTheBtnsAnimation_kShake];
+                break;
+                
+                
+            default:
+                break;
+        }
+    }];
 }
 
 -(void)hideSpringMenu{
     animTag = self.itemCount;
-    [self doHidingTheBtnsAnimation];
+    [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
+    switch (self.animationType) {
+        case kSpring:
+            [self doHidingTheBtnsAnimation_kSpring];
+            break;
+        case kFade:
+            [self doHidingTheBtnsAnimation_kFade];
+            break;
+        case kShake:
+            [self doHidingTheBtnsAnimation_kShake];
+            break;
+ 
+        default:
+            break;
+    }
 }
 
 @end
